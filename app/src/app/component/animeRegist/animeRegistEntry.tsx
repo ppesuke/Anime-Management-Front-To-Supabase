@@ -15,6 +15,7 @@ const AnimeRegistEntry = () => {
     favoriteCharacter: "",
     speed: "0",
     seasonType: "0",
+    animeFlg: "1",
     ReleaseDate: "",
     deliveryWeekday: "1",
     deliveryTime: "",
@@ -37,7 +38,7 @@ const AnimeRegistEntry = () => {
     }
     
     try {
-      // 同名アニメのチェック
+      // 同名作品のチェック
       const { data: existingAnime, error: checkError } = await supabase
         .from('anime')
         .select('anime_name')
@@ -48,11 +49,11 @@ const AnimeRegistEntry = () => {
       if (checkError && checkError.code !== 'PGRST116') throw checkError;
       
       if (existingAnime) {
-        alert('同じ名前のアニメが既に登録されています');
+        alert('同じ名前の作品が既に登録されています');
         return;
       }
       
-      // アニメテーブルに挿入
+      // 作品テーブルに挿入
       const { data: animeData, error: animeError } = await supabase
         .from('anime')
         .insert({
@@ -60,14 +61,15 @@ const AnimeRegistEntry = () => {
           anime_name: formData.animeName,
           episode: 0,
           favoritecharacter: formData.favoriteCharacter,
-          speed: formData.speed === "1"
+          speed: formData.speed === "1",
+          anime_flg: formData.animeFlg === "1"
         })
         .select()
         .single();
         
       if (animeError) throw animeError;
       
-      // 今期アニメの場合、current_animeテーブルにも挿入
+      // 今期作品の場合、current_animeテーブルにも挿入
       if (formData.seasonType === "1") {
         const currentDate = new Date();
         const { error: currentError } = await supabase
@@ -84,7 +86,7 @@ const AnimeRegistEntry = () => {
           
         if (currentError) throw currentError;
       } else {
-        // 過去アニメの場合、past_animeテーブルに挿入
+        // 過去作品の場合、past_animeテーブルに挿入
         const { error: pastError } = await supabase
           .from('past_anime')
           .insert({
@@ -103,6 +105,7 @@ const AnimeRegistEntry = () => {
         favoriteCharacter: "",
         speed: "0",
         seasonType: "0",
+        animeFlg: "1",
         ReleaseDate: "",
         deliveryWeekday: "1",
         deliveryTime: "",
@@ -126,7 +129,7 @@ const AnimeRegistEntry = () => {
               htmlFor="animeName"
               className="block text-sm font-medium text-black"
             >
-              アニメ名
+              作品名
             </label>
             <input
               type="text"
@@ -134,7 +137,7 @@ const AnimeRegistEntry = () => {
               name="animeName"
               value={formData.animeName}
               onChange={handleChange}
-              placeholder="アニメ名を入力"
+              placeholder="作品名を入力"
               className="!text-black mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             />
           </div>
@@ -161,6 +164,25 @@ const AnimeRegistEntry = () => {
 
           <div>
             <label
+              htmlFor="animeFlg"
+              className="block text-sm font-medium text-black"
+            >
+              種別
+            </label>
+            <select
+              id="animeFlg"
+              name="animeFlg"
+              value={formData.animeFlg}
+              onChange={handleChange}
+              className="!text-black mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            >
+              <option value="1">アニメ</option>
+              <option value="0">ドラマ</option>
+            </select>
+          </div>
+
+          <div>
+            <label
               htmlFor="speed"
               className="block text-sm font-medium text-black"
             >
@@ -184,7 +206,7 @@ const AnimeRegistEntry = () => {
               htmlFor="seasonType"
               className="block text-sm font-medium text-black"
             >
-              アニメの時期
+              作品の時期
             </label>
             <select
               id="seasonType"
@@ -193,8 +215,8 @@ const AnimeRegistEntry = () => {
               onChange={handleChange}
               className="!text-black mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             >
-              <option value="0">過去のアニメ</option>
-              <option value="1">今期のアニメ</option>
+              <option value="0">過去の作品</option>
+              <option value="1">今期の作品</option>
             </select>
           </div>
 

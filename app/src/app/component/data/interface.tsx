@@ -10,6 +10,7 @@ export interface IAnime{
     episode:number,
     favoritecharacter:string,
     speed:boolean,
+    anime_flg:boolean,
     view_count?:number,
     created_at?:string,
     updated_at?:string

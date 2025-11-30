@@ -26,6 +26,7 @@ export const getPastAnime = async (userId: string): Promise<IPastAnime[]> => {
       episode: item.anime.episode,
       favoritecharacter: item.anime.favoritecharacter,
       speed: item.anime.speed,
+      anime_flg: item.anime.anime_flg ?? true,
     },
   }));
 };
