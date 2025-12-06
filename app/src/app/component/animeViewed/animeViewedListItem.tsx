@@ -1,9 +1,8 @@
 import { AnimeViewedListItemProps } from "../data/props";
 export const AnimeViewedListItem : React.FC<AnimeViewedListItemProps> = ({viewedAnime,onReturn}) => {
 
-    // 日本標準時間（JST）で日付を取得
+    // 日付を取得
     const endDate = new Date(viewedAnime.viewed_end_date);
-    const jstDate = new Date(endDate.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
 
     const formatAnimeName = (name: string) => {
         if (window.innerWidth >= 768) return name;
@@ -18,9 +17,9 @@ export const AnimeViewedListItem : React.FC<AnimeViewedListItemProps> = ({viewed
     const animeName = formatAnimeName(viewedAnime.anime.anime_name);
     const bgColor = viewedAnime.anime.anime_flg ? "bg-blue-50" : "bg-pink-50";
     const hoverColor = viewedAnime.anime.anime_flg ? "hover:bg-blue-100" : "hover:bg-pink-100";
-    const year = jstDate.getFullYear();
-    const month = (jstDate.getMonth() + 1).toString().padStart(2, '0');
-    const day = jstDate.getDate().toString().padStart(2, '0');
+    const year = endDate.getFullYear();
+    const month = (endDate.getMonth() + 1).toString().padStart(2, '0');
+    const day = endDate.getDate().toString().padStart(2, '0');
 
     const releaseDate = `${year}-${month}-${day}`;
 

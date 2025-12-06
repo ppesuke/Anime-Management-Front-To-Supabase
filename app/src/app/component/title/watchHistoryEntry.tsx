@@ -5,7 +5,13 @@ import { getWatchHistoryByDate } from '../../../lib/service/watchHistoryService'
 const WatchHistoryEntry = () => {
   const [watchHistory, setWatchHistory] = useState<any[]>([]);
   const [user, setUser] = useState<{ id: string } | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  // 日本標準時間（JST）で今日の日付を取得
+  const getJSTDate = () => {
+    const now = new Date();
+    const jstDate = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
+    return jstDate.toISOString().split('T')[0];
+  };
+  const [selectedDate, setSelectedDate] = useState<string>(getJSTDate());
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
