@@ -23,10 +23,11 @@ const AnimeViewedEntry = () => {
           anime!inner(*)
         `)
         .eq('anime.user_id', user.id)
-        .order('anime(view_count)', { ascending: false });
+        .order('anime(view_count)', { ascending: false })
+        .order('viewed_end_date', { ascending: true });
         
       if (error) throw error;
-      
+
       const formattedData: IViewedAnime[] = data.map((item: { id: number; anime_id: number; viewed_end_date: string; anime: { id: number; user_id: string; anime_name: string; episode: number; favoritecharacter: string; speed: boolean; anime_flg: boolean; view_count: number } }) => ({
         id: item.id,
         anime_id: item.anime_id,

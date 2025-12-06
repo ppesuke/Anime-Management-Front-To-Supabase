@@ -8,8 +8,10 @@ const WatchHistoryEntry = () => {
   // 日本標準時間（JST）で今日の日付を取得
   const getJSTDate = () => {
     const now = new Date();
-    const jstDate = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
-    return jstDate.toISOString().split('T')[0];
+    // UTCから日本時間（UTC+9）に変換
+    const jstOffset = 9 * 60; // 9時間 = 540分
+    const jstTime = new Date(now.getTime() + jstOffset * 60 * 1000);
+    return jstTime.toISOString().split('T')[0];
   };
   const [selectedDate, setSelectedDate] = useState<string>(getJSTDate());
 
