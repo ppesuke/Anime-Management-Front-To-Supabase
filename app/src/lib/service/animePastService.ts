@@ -11,7 +11,7 @@ export const getPastAnime = async (userId: string): Promise<IPastAnime[]> => {
     `)
     .eq('anime.user_id', userId)
     .order('anime(episode)', { ascending: false })
-    .order('created_at', { ascending: true });
+    .order('anime(anime_name)', { ascending: false });
     
   if (error) throw error;
   
