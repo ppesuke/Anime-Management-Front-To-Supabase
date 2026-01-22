@@ -11,7 +11,6 @@ export const getPastAnime = async (userId: string): Promise<IPastAnime[]> => {
     `)
     .eq('anime.user_id', userId)
     .order('anime(episode)', { ascending: false })
-    .order('watching_start_date', { ascending: true })
     .order('created_at', { ascending: true });
     
   if (error) throw error;
@@ -38,18 +37,28 @@ export const pastAnimeEpisodeUp = async (animeId: number, userId: string): Promi
     .select('episode')
     .eq('anime_id', animeId)
     .single();
-    
+
   if (fetchError) throw fetchError;
-  
+
   const newEpisode = currentData.episode + 1;
-  
+
   const { error } = await supabase
     .from('anime')
     .update({ episode: newEpisode })
     .eq('anime_id', animeId);
-    
+
   if (error) throw error;
-  
+
+  // 1話を初めて入力した場合、watching_start_dateを現在日付に更新
+  if (newEpisode === 1) {
+    const { error: updateStartDateError } = await supabase
+      .from('past_anime')
+      .update({ watching_start_date: new Date().toISOString().split('T')[0] })
+      .eq('anime_id', animeId);
+
+    if (updateStartDateError) throw updateStartDateError;
+  }
+
   await addWatchHistory(animeId, userId, newEpisode);
 };
 

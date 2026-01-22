@@ -97,12 +97,13 @@ const AnimeRegistEntry = () => {
         if (currentError) throw currentError;
       } else {
         // 過去作品の場合、past_animeテーブルに挿入
+        // watching_start_dateはデフォルト値として0000-01-01を設定し、1話初回入力時に更新する
         const { error: pastError } = await supabase
           .from('past_anime')
           .insert({
             anime_id: animeData.anime_id,
             user_id: user.id,
-            watching_start_date: new Date().toISOString()
+            watching_start_date: '0000-01-01'
           });
           
         if (pastError) throw pastError;
