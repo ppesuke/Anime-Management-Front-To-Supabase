@@ -1,0 +1,42 @@
+name: Deploy Infrastructure (CloudFormation)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'cloudformation/**'
+  workflow_dispatch:
+
+jobs:
+  deploy-infrastructure:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy CloudFormation stack
+        run: |
+          aws cloudformation deploy \
+            --template-file cloudformation/s3-static-hosting.yaml \
+            --stack-name ${{ secrets.STACK_NAME }} \
+            --parameter-overrides \
+              BucketName=${{ secrets.S3_BUCKET_NAME }} \
+              AllowedIP=${{ secrets.ALLOWED_IP }} \
+            --no-fail-on-empty-changeset
+
+      - name: Get Stack Outputs
+        run: |
+          echo "📦 CloudFormation Stack Outputs:"
+          aws cloudformation describe-stacks \
+            --stack-name ${{ secrets.STACK_NAME }} \
+            --query 'Stacks[0].Outputs' \
+            --output table
